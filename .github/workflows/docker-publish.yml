@@ -68,4 +68,4 @@ jobs:
       # Step 7: Push Docker image to GHCR
       - name: Push Docker image
         run: |
-          docker push ghcr.io/${{ github.repository }}/my-spring-boot-app:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository }}/emsp:${{ github.sha }}
