@@ -1,0 +1,87 @@
+Here are some **sample EMAIDs** for Electric Vehicles (EVs) based on the format used in the previous Java program. The format is:
+
+**COUNTRYCODE-MANUFACTURER-MODEL-UNIQUEID-CHECKDIGIT**
+
+---
+
+### Sample EMAIDs:
+1. **US-TES-MODELS-12345-5**
+   - **Country Code**: `US` (United States)
+   - **Manufacturer**: `TES` (Tesla)
+   - **Model**: `MODELS` (Model S)
+   - **Unique ID**: `12345`
+   - **Check Digit**: `5`
+
+2. **DE-BMW-I4-67890-6**
+   - **Country Code**: `DE` (Germany)
+   - **Manufacturer**: `BMW` (BMW)
+   - **Model**: `I4` (i4)
+   - **Unique ID**: `67890`
+   - **Check Digit**: `6`
+
+3. **CN-BYD-HAN-54321-9**
+   - **Country Code**: `CN` (China)
+   - **Manufacturer**: `BYD` (BYD)
+   - **Model**: `HAN` (Han EV)
+   - **Unique ID**: `54321`
+   - **Check Digit**: `9`
+
+4. **JP-NIS-LEAF-98765-7**
+   - **Country Code**: `JP` (Japan)
+   - **Manufacturer**: `NIS` (Nissan)
+   - **Model**: `LEAF` (Leaf)
+   - **Unique ID**: `98765`
+   - **Check Digit**: `7`
+
+5. **FR-REN-ZOE-11223-4**
+   - **Country Code**: `FR` (France)
+   - **Manufacturer**: `REN` (Renault)
+   - **Model**: `ZOE` (Zoe)
+   - **Unique ID**: `11223`
+   - **Check Digit**: `4`
+
+6. **KR-HYN-KONA-33445-8**
+   - **Country Code**: `KR` (South Korea)
+   - **Manufacturer**: `HYN` (Hyundai)
+   - **Model**: `KONA` (Kona Electric)
+   - **Unique ID**: `33445`
+   - **Check Digit**: `8`
+
+7. **IN-TAT-NEXON-55667-2**
+   - **Country Code**: `IN` (India)
+   - **Manufacturer**: `TAT` (Tata Motors)
+   - **Model**: `NEXON` (Nexon EV)
+   - **Unique ID**: `55667`
+   - **Check Digit**: `2`
+
+8. **CA-FRD-MACH-77889-3**
+   - **Country Code**: `CA` (Canada)
+   - **Manufacturer**: `FRD` (Ford)
+   - **Model**: `MACH` (Mustang Mach-E)
+   - **Unique ID**: `77889`
+   - **Check Digit**: `3`
+
+9. **AU-POL-2-99001-1**
+   - **Country Code**: `AU` (Australia)
+   - **Manufacturer**: `POL` (Polestar)
+   - **Model**: `2` (Polestar 2)
+   - **Unique ID**: `99001`
+   - **Check Digit**: `1`
+
+10. **UK-VOL-XC40-22334-0**
+    - **Country Code**: `UK` (United Kingdom)
+    - **Manufacturer**: `VOL` (Volvo)
+    - **Model**: `XC40` (XC40 Recharge)
+    - **Unique ID**: `22334`
+    - **Check Digit**: `0`
+
+---
+
+### Notes:
+- The **Check Digit** is calculated as the last digit of the sum of the digits in the `Unique ID`. For example:
+  - For `12345`: `1 + 2 + 3 + 4 + 5 = 15`, so the check digit is `5`.
+  - For `67890`: `6 + 7 + 8 + 9 + 0 = 30`, so the check digit is `0`.
+
+- You can customize the format further based on your requirements, such as adding more fields (e.g., region code, timestamp) or using a more complex check digit algorithm.
+
+Let me know if you need more examples or further assistance!

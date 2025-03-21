@@ -1,0 +1,87 @@
+Here are some **sample EMAIDs** for **Volvo Electric Vehicles (EVs)** based on the format used in the previous examples. The format is:
+
+**COUNTRYCODE-MANUFACTURER-MODEL-UNIQUEID-CHECKDIGIT**
+
+---
+
+### Sample EMAIDs for Volvo EVs:
+1. **SE-VOL-XC40-12345-5**
+   - **Country Code**: `SE` (Sweden)
+   - **Manufacturer**: `VOL` (Volvo)
+   - **Model**: `XC40` (XC40 Recharge)
+   - **Unique ID**: `12345`
+   - **Check Digit**: `5`
+
+2. **US-VOL-C40-67890-6**
+   - **Country Code**: `US` (United States)
+   - **Manufacturer**: `VOL` (Volvo)
+   - **Model**: `C40` (C40 Recharge)
+   - **Unique ID**: `67890`
+   - **Check Digit**: `6`
+
+3. **DE-VOL-XC90-54321-9**
+   - **Country Code**: `DE` (Germany)
+   - **Manufacturer**: `VOL` (Volvo)
+   - **Model**: `XC90` (XC90 Recharge)
+   - **Unique ID**: `54321`
+   - **Check Digit**: `9`
+
+4. **CN-VOL-S60-98765-7**
+   - **Country Code**: `CN` (China)
+   - **Manufacturer**: `VOL` (Volvo)
+   - **Model**: `S60` (S60 Recharge)
+   - **Unique ID**: `98765`
+   - **Check Digit**: `7`
+
+5. **UK-VOL-V90-11223-4**
+   - **Country Code**: `UK` (United Kingdom)
+   - **Manufacturer**: `VOL` (Volvo)
+   - **Model**: `V90` (V90 Recharge)
+   - **Unique ID**: `11223`
+   - **Check Digit**: `4`
+
+6. **FR-VOL-XC60-33445-8**
+   - **Country Code**: `FR` (France)
+   - **Manufacturer**: `VOL` (Volvo)
+   - **Model**: `XC60` (XC60 Recharge)
+   - **Unique ID**: `33445`
+   - **Check Digit**: `8`
+
+7. **IN-VOL-S90-55667-2**
+   - **Country Code**: `IN` (India)
+   - **Manufacturer**: `VOL` (Volvo)
+   - **Model**: `S90` (S90 Recharge)
+   - **Unique ID**: `55667`
+   - **Check Digit**: `2`
+
+8. **CA-VOL-C30-77889-3**
+   - **Country Code**: `CA` (Canada)
+   - **Manufacturer**: `VOL` (Volvo)
+   - **Model**: `C30` (C30 Recharge)
+   - **Unique ID**: `77889`
+   - **Check Digit**: `3`
+
+9. **AU-VOL-V60-99001-1**
+   - **Country Code**: `AU` (Australia)
+   - **Manufacturer**: `VOL` (Volvo)
+   - **Model**: `V60` (V60 Recharge)
+   - **Unique ID**: `99001`
+   - **Check Digit**: `1`
+
+10. **NL-VOL-XC20-22334-0**
+    - **Country Code**: `NL` (Netherlands)
+    - **Manufacturer**: `VOL` (Volvo)
+    - **Model**: `XC20` (XC20 Recharge)
+    - **Unique ID**: `22334`
+    - **Check Digit**: `0`
+
+---
+
+### Notes:
+- The **Check Digit** is calculated as the last digit of the sum of the digits in the `Unique ID`. For example:
+  - For `12345`: `1 + 2 + 3 + 4 + 5 = 15`, so the check digit is `5`.
+  - For `67890`: `6 + 7 + 8 + 9 + 0 = 30`, so the check digit is `0`.
+
+- The **Model** names are based on Volvo's current and potential future electric vehicle lineup.
+
+Let me know if you need more examples or further assistance!
