@@ -17,6 +17,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      checks: write
 
     steps:
       # Step 1: Checkout the code
