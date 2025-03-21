@@ -39,9 +39,15 @@ jobs:
         run: ./mvnw clean install
 
       # Optional: Upload test results (if you want to see them in the GitHub UI)
-      - name: Upload test results
-        if: always() # Always upload, even if tests fail
-        uses: actions/upload-artifact@v4
+      #- name: Upload test results
+      #  if: always() # Always upload, even if tests fail
+      #  uses: actions/upload-artifact@v4
+      #  with:
+      #    name: test-results
+      #    path: target/surefire-reports
+
+      # Step 5: Publish JUnit test results
+      - name: Publish Test Results
+        uses: mikepenz/action-junit-report@v3
         with:
-          name: test-results
-          path: target/surefire-reports
+          report_paths: 'target/surefire-reports/TEST-*.xml'
