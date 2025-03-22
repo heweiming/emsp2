@@ -2,6 +2,7 @@ package com.volvotest.emsp.controller;
 
 import com.volvotest.emsp.model.Account;
 import com.volvotest.emsp.common.AccountStatus;
+import com.volvotest.emsp.model.Token;
 import com.volvotest.emsp.service.AccountService;
 import com.volvotest.emsp.service.CardService;
 import org.slf4j.Logger;
@@ -53,5 +54,27 @@ public class AccountController {
         }
         String contractId = account.getContractId();
         return this.cardService.updateCardContractId(Integer.parseInt(cardId), contractId);
+    }
+
+    @PostMapping("/accounts/{accountId}/generate_token")
+    public Token generateToken(@PathVariable Long accountId) {
+        log.info("generate token for account: {}", accountId);
+        return accountService.generateToken(accountId);
+    }
+    @GetMapping("/accounts/{accountId}/tokens/{tokenId}")
+    public Token getTokenByAccountIdAndTokenId(@PathVariable Long accountId, @PathVariable Long tokenId) {
+        log.info("getTokenByAccountIdAndTokenId token: {} for account: {}", tokenId, accountId);
+        Token token = accountService.getTokenByAccountIdAndTokenId(accountId, tokenId);
+        log.info("getTokenByAccountIdAndTokenId token: {}", token);
+        return token;
+    }
+
+    @GetMapping("/accounts/{accountId}/tokens/last_updated_at/{lastUpdatedAt}/last_id/{lastId}/page_size/{pageSize}")
+    public List<Token> getTokensByAccountIdAndLastUpdatedAt(@PathVariable Long accountId,
+                                                            @PathVariable Long lastUpdatedAt,
+                                                            @PathVariable long lastId,
+                                                            @PathVariable int pageSize) {
+        log.info("getTokensByAccountIdAndLastUpdatedAt for account: {} lastUpdatedAt: {} lastId: {} pageSize: {}", accountId, lastUpdatedAt, lastId, pageSize);
+        return accountService.getTokensByAccountIdAndLastUpdatedAt(accountId, lastUpdatedAt, lastId, pageSize);
     }
 }

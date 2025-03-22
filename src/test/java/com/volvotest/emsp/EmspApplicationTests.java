@@ -1,6 +1,7 @@
 package com.volvotest.emsp;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.volvotest.emsp.model.Account;
 import com.volvotest.emsp.common.AccountStatus;
@@ -21,7 +22,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 
 @SpringBootTest
@@ -190,5 +198,131 @@ class EmspApplicationTests {
 		mockMvc.perform(get("/cards/1")).andDo(print()).andExpect(jsonPath("$.contractId").value(this.contractId));
 	}
 
+	@Test
+	void testGenerateToken() throws Exception {
+		this.createAccount();
+		mockMvc.perform(MockMvcRequestBuilders.post("/accounts/1/generate_token"))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(1));
+		mockMvc.perform(MockMvcRequestBuilders.post("/accounts/1/generate_token"))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(2));
+		mockMvc.perform(MockMvcRequestBuilders.post("/accounts/1/generate_token"))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(3));
+	}
 
+	@Test
+	void testPaginationQueryToken() throws Exception {
+		List<String> tokenJsonList = new ArrayList<>();
+		this.createAccount();
+		for (int i = 0; i < 20; i++) {
+			tokenJsonList.add(this.generateToken(1));
+			Thread.sleep(100L);
+		}
+		tokenJsonList.forEach(System.out::println);
+
+//		ObjectMapper objectMapper = new ObjectMapper();
+//		JsonNode lastTokenNode = objectMapper.readTree(tokenJsonList.get(tokenJsonList.size() -1));
+//		String id = lastTokenNode.get("id").asText();
+//		System.out.println("last id: " + id);
+//		String tokenJson = mockMvc.perform(MockMvcRequestBuilders.get("/accounts/"+1+"/tokens/" + id))
+//				.andDo(print())
+//				.andExpect(status().isOk())
+//				.andExpect(jsonPath("$.id").value(20))
+//				.andReturn().getResponse().getContentAsString();
+//		System.out.println("tokenJson: " + tokenJson);
+
+
+		String jsonString = tokenJsonList.get(0);
+		JsonNode rootNode = objectMapper.readTree(jsonString);
+
+		// Extract specific field value
+		String lastUpdatedAt = rootNode.get("lastUpdatedAt").asText();
+		String id = rootNode.get("id").asText();
+		System.out.println("first lastUpdatedAt: " + lastUpdatedAt + ", id: " + id);
+
+		String dateString = lastUpdatedAt;
+
+		// Step 1: Parse the string into OffsetDateTime
+		OffsetDateTime offsetDateTime = OffsetDateTime.parse(dateString);
+
+		// Step 2: Convert OffsetDateTime to java.util.Date
+		Date date = Date.from(offsetDateTime.toInstant());
+		long milliseconds = date.getTime();
+		System.out.println("Converted Date: " + date + ", milliseconds: " + date.getTime());
+
+		final int PAGE_SIZE = 3;
+
+		final long[] lastId4Page = {-1};
+		final long[] lastUpdatedAtMilliseconds = {-1};
+		mockMvc.perform(get("/accounts/1/tokens/last_updated_at/" + milliseconds + "/last_id/0/page_size/" + PAGE_SIZE))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$").isArray())
+				.andExpect(jsonPath("$").isNotEmpty())
+				.andExpect(jsonPath("$[0].id").value(1))
+				.andExpect(jsonPath("$[2].id").value(3))
+				.andDo(new ResultHandler() {
+					@Override
+					public void handle(MvcResult result) throws Exception {
+						String content = result.getResponse().getContentAsString();
+						System.out.println(content);
+						JsonNode jsonNode = objectMapper.readTree(content);
+						long lastId = jsonNode.get(jsonNode.size()-1).get("id").asLong();
+
+						long pageFirstId = jsonNode.get(0).get("id").asLong();
+						long pageLastId = jsonNode.get(jsonNode.size()-1).get("id").asLong();
+						System.out.println("PaginationQuery: pageFirstId: " + pageFirstId + ", pageLastId: " + pageLastId);
+
+
+						String lastUpdatedAt = jsonNode.get(jsonNode.size()-1).get("lastUpdatedAt").asText();
+						System.out.println("PaginationQuery: lastId: " + lastId + ", lastUpdatedAt: " + lastUpdatedAt);
+						Date date = Date.from(OffsetDateTime.parse(lastUpdatedAt).toInstant());
+						long milliseconds = date.getTime();
+//						System.out.println("Converted Date: " + date + ", milliseconds: " + date.getTime());
+						lastUpdatedAtMilliseconds[0] = milliseconds;
+						lastId4Page[0] = lastId;
+					}
+				});
+
+		mockMvc.perform(get("/accounts/1/tokens/last_updated_at/" + lastUpdatedAtMilliseconds[0] + "/last_id/"+lastId4Page[0]+"/page_size/" + PAGE_SIZE))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$").isArray())
+				.andExpect(jsonPath("$").isNotEmpty())
+				.andExpect(jsonPath("$[0].id").value(4))
+				.andExpect(jsonPath("$[2].id").value(6))
+				.andDo(new ResultHandler() {
+					@Override
+					public void handle(MvcResult result) throws Exception {
+						String content = result.getResponse().getContentAsString();
+						System.out.println(content);
+						JsonNode jsonNode = objectMapper.readTree(content);
+
+
+						long pageFirstId = jsonNode.get(0).get("id").asLong();
+						long pageLastId = jsonNode.get(jsonNode.size()-1).get("id").asLong();
+						System.out.println("PaginationQuery: pageFirstId: " + pageFirstId + ", pageLastId: " + pageLastId);
+
+
+						long lastId = jsonNode.get(jsonNode.size()-1).get("id").asLong();
+						String lastUpdatedAt = jsonNode.get(jsonNode.size()-1).get("lastUpdatedAt").asText();
+						System.out.println("PaginationQuery: lastId: " + lastId + ", lastUpdatedAt: " + lastUpdatedAt);
+					}
+				});
+	}
+
+	private String generateToken(long accountId) throws Exception {
+		String lastUpdatedAt = mockMvc.perform(MockMvcRequestBuilders.post("/accounts/"+accountId+"/generate_token"))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").isNumber())
+				.andReturn().getResponse().getContentAsString();
+
+		return lastUpdatedAt;
+	}
 }
