@@ -6,5 +6,11 @@
 </head>
 <body>
     <p>This is home page.</p>
+    <h1 id="root"></h1>
+    <script >
+        let now = new Date();
+        let time = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+        document.getElementById("root").innerHTML = "Current time is: " + time;
+    </script>
 </body>
 </html>
