@@ -69,12 +69,12 @@ jobs:
       # Step 6: Build Docker image
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/${{ github.repository }}/emsp:${{ github.sha }} .
-      #    docker build -t ghcr.io/${{ github.repository }}/emsp:latest .
+          docker build -t ghcr.io/${{ github.repository }}/emsp:latest .
+      #    docker build -t ghcr.io/${{ github.repository }}/emsp:${{ github.sha }} .
 
 
       # Step 7: Push Docker image to GHCR
       - name: Push Docker image
         run: |
-          docker push ghcr.io/${{ github.repository }}/emsp:${{ github.sha }}
-      #    docker push ghcr.io/${{ github.repository }}/emsp:latest
+          docker push ghcr.io/${{ github.repository }}/emsp:latest
+      #    docker push ghcr.io/${{ github.repository }}/emsp:${{ github.sha }}

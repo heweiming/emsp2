@@ -1,4 +1,4 @@
-name: CD to Amazon Linux 2023
+name: Spring Boot CD # CD to Amazon EC2
 
 on:
   workflow_run:
@@ -24,7 +24,7 @@ jobs:
             echo ${{ secrets.GITHUB_TOKEN }} | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
             # Pull the latest image (force cleanup of unused images)
-            docker pull ghcr.io/heweiming/emsp2/emsp:468412abf87ff42a4952204c38885fe9747e28d6 || exit 1
+            docker pull ghcr.io/heweiming/emsp2/emsp:latest || exit 1
 
             # Stop/remove old container (ignore errors if not running)
             sudo docker stop emsp || true
