@@ -1,0 +1,42 @@
+name: CD to Amazon Linux 2023
+
+on:
+  workflow_run:
+    workflows: ["Spring Boot CI"]  # Your CI workflow name
+    branches: [main]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest  # GitHub runner OS (independent of EC2 OS)
+
+    steps:
+      - name: Deploy to EC2 (Amazon Linux 2023)
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}          # EC2 IP (e.g., 1.2.3.4)
+          username: ec2-user                      # Default user for Amazon Linux
+          key: ${{ secrets.SSH_PRIVATE_KEY }}     # SSH key for EC2
+          script: |
+            # Authenticate with GitHub Container Registry (GHCR)
+            echo ${{ secrets.GITHUB_TOKEN }} | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            # Pull the latest image (force cleanup of unused images)
+            docker pull ghcr.io/heweiming/emsp2/emsp:468412abf87ff42a4952204c38885fe9747e28d6 || exit 1
+
+            # Stop/remove old container (ignore errors if not running)
+            sudo docker stop emsp || true
+            sudo docker rm emsp || true
+
+            # Run the new container (Amazon Linux-compatible)
+            sudo docker run -d \
+              --name emsp \
+              --restart unless-stopped \
+              -p 80:8082 \
+              -e NODE_ENV=production \
+              ghcr.io/heweiming/emsp2/emsp:468412abf87ff42a4952204c38885fe9747e28d6
+
+            # Clean up unused images to save space
+            sudo docker image prune -af
