@@ -36,7 +36,7 @@ jobs:
               --restart unless-stopped \
               -p 80:8082 \
               -e NODE_ENV=production \
-              ghcr.io/heweiming/emsp2/emsp:468412abf87ff42a4952204c38885fe9747e28d6
+              ghcr.io/heweiming/emsp2/emsp:latest
 
             # Clean up unused images to save space
             sudo docker image prune -af
