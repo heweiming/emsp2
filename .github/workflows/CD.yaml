@@ -2,7 +2,7 @@ name: CD to Amazon Linux 2023
 
 on:
   workflow_run:
-    workflows: ["Spring Boot CI"]  # Your CI workflow name
+    workflows: ["CI"]  # Your CI workflow name
     branches: [master]
     types:
       - completed
