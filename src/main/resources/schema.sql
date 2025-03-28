@@ -11,13 +11,7 @@ CREATE TABLE cards (
     contract_id VARCHAR(255),
     card_number VARCHAR(255) NOT NULL,
     status INT NOT NULL DEFAULT 0,
-    balance DECIMAL(10, 2)
-);
-
-CREATE TABLE tokens (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    token VARCHAR(255) NOT NULL,
-    account_id BIGINT NOT NULL,
+    balance DECIMAL(10, 2),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     expired_at TIMESTAMP

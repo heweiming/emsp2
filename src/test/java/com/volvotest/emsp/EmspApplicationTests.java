@@ -66,14 +66,14 @@ class EmspApplicationTests {
 				.andExpect(jsonPath("$[0].uid").value(1));
 	}
 
-	void createAccount() throws Exception {
+	String createAccount() throws Exception {
 		// Create an Account object
 		Account account = new Account(-1, "tohe@qq.com", "heweiming", contractId, AccountStatus.ACTIVED);
 		// Convert the Account object to JSON
 		String accountJson = objectMapper.writeValueAsString(account);
 
-		mockMvc.perform(post("/accounts").contentType(MediaType.APPLICATION_JSON_VALUE).content(accountJson))
-				.andDo(print());
+		return mockMvc.perform(post("/accounts").contentType(MediaType.APPLICATION_JSON_VALUE).content(accountJson))
+				.andDo(print()).andReturn().getResponse().getContentAsString();
 	}
 	@Test
 	void testCreateAccount() throws Exception {
@@ -123,7 +123,7 @@ class EmspApplicationTests {
 
 	@Test
 	void testQueryCardList() throws Exception {
-		this.createCard();
+		this.createCard(0);
 		System.out.println("At first, Card should empty.");
 		mockMvc.perform(get("/cards"))
 				.andDo(print())
@@ -133,21 +133,29 @@ class EmspApplicationTests {
 
 	}
 
-	void createCard() throws Exception {
+	String createCard() throws Exception {
+		return createCard(1);
+	}
+	String createCard(int index) throws Exception {
 		// Create a Card object
-		Card card = new Card(-1, "123456","", CardStatus.DEACTIVED, 100);
+		Date now = new Date();
+		Date expiredAt = new Date(now.getTime() + 1000 * 60 * 60 * 24);
+		Card card = new Card(-1, "123456_" + index,"", CardStatus.DEACTIVED, 100, expiredAt, now, now);
 		// Convert the Card object to JSON
 		String cardJson = objectMapper.writeValueAsString(card);
-		mockMvc.perform(post("/cards").contentType(MediaType.APPLICATION_JSON_VALUE).content(cardJson))
+		return mockMvc.perform(post("/cards").contentType(MediaType.APPLICATION_JSON_VALUE).content(cardJson))
 				.andDo(print())
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$").isNotEmpty());
+				.andExpect(jsonPath("$").isNotEmpty())
+				.andReturn().getResponse().getContentAsString();
 	}
 
 	@Test
 	void testCreateCard() throws Exception {
 		// Create a Card object
-		Card card = new Card(-1, "123456","123456", CardStatus.ACTIVED, 100);
+		Date now = new Date();
+		Date expiredAt = new Date(now.getTime() + 1000 * 60 * 60 * 24);
+		Card card = new Card(-1, "123456","123456", CardStatus.ACTIVED, 100, expiredAt, now, now);
 		// Convert the Card object to JSON
 		String cardJson = objectMapper.writeValueAsString(card);
 		mockMvc.perform(post("/cards").contentType(MediaType.APPLICATION_JSON_VALUE).content(cardJson))
@@ -158,8 +166,11 @@ class EmspApplicationTests {
 
 	@Test
 	void testUpdateCard() throws Exception {
-		this.createCard();
-		Card card = new Card(1,"123456", "1234",  CardStatus.ACTIVED, 200);
+		this.createCard(1);
+		Date now = new Date();
+		Date expiredAt = new Date(now.getTime() + 1000 * 60 * 60 * 24);
+
+		Card card = new Card(1,"123456", "1234",  CardStatus.ACTIVED, 200, expiredAt, now, now);
 		mockMvc.perform(MockMvcRequestBuilders.put("/cards")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(card)))
@@ -175,7 +186,7 @@ class EmspApplicationTests {
 
 	@Test
 	void testDeleteCard() throws Exception {
-		this.createCard();
+		this.createCard(1);
 		mockMvc.perform(MockMvcRequestBuilders.delete("/cards/1"))
 				.andDo(print())
 				.andExpect(status().isOk())
@@ -184,62 +195,56 @@ class EmspApplicationTests {
 
 	@Test
 	void testLinkCardToAccount() throws Exception {
-		this.createAccount();
-		this.createCard();
-		mockMvc.perform(get("/cards/1")).andDo(print()).andExpect(jsonPath("$.contractId").value(""));
+		String accountId = this.createAccount();
+		String cardId = this.createCard();
+		mockMvc.perform(get("/cards/"+accountId)).andDo(print()).andExpect(jsonPath("$.contractId").value(""));
 
-		mockMvc.perform(MockMvcRequestBuilders.post("/accounts/1/link")
+		mockMvc.perform(MockMvcRequestBuilders.post("/accounts/"+ accountId + "/link")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content("1"))
+						.content(cardId))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$").isBoolean());
 
-		mockMvc.perform(get("/cards/1")).andDo(print()).andExpect(jsonPath("$.contractId").value(this.contractId));
+		mockMvc.perform(get("/cards/" + cardId)).andDo(print()).andExpect(jsonPath("$.contractId").value(this.contractId));
 	}
 
 	@Test
-	void testGenerateToken() throws Exception {
-		this.createAccount();
-		mockMvc.perform(MockMvcRequestBuilders.post("/accounts/1/generate_token"))
-				.andDo(print())
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.id").value(1));
-		mockMvc.perform(MockMvcRequestBuilders.post("/accounts/1/generate_token"))
-				.andDo(print())
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.id").value(2));
-		mockMvc.perform(MockMvcRequestBuilders.post("/accounts/1/generate_token"))
-				.andDo(print())
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.id").value(3));
-	}
-
-	@Test
-	void testPaginationQueryToken() throws Exception {
-		List<String> tokenJsonList = new ArrayList<>();
-		this.createAccount();
+	void testPaginationQueryCard() throws Exception {
+		List<String> cardJsonList = new ArrayList<>();
+		String accountId = this.createAccount();
 		for (int i = 0; i < 20; i++) {
-			tokenJsonList.add(this.generateToken(1));
+			String cardId = this.createCard(i);
+			String json = mockMvc.perform(get("/cards/"+cardId))
+					.andDo(print())
+					.andExpect(status().isOk())
+					.andReturn().getResponse().getContentAsString();
+			mockMvc.perform(post("/accounts/"+ accountId + "/link").contentType(MediaType.APPLICATION_JSON)
+							.content(cardId))
+					.andDo(print())
+					.andExpect(status().isOk())
+					.andExpect(jsonPath("$").isBoolean());
+			cardJsonList.add(json);
 			Thread.sleep(100L);
 		}
-		tokenJsonList.forEach(System.out::println);
-
-//		ObjectMapper objectMapper = new ObjectMapper();
-//		JsonNode lastTokenNode = objectMapper.readTree(tokenJsonList.get(tokenJsonList.size() -1));
-//		String id = lastTokenNode.get("id").asText();
-//		System.out.println("last id: " + id);
-//		String tokenJson = mockMvc.perform(MockMvcRequestBuilders.get("/accounts/"+1+"/tokens/" + id))
-//				.andDo(print())
-//				.andExpect(status().isOk())
-//				.andExpect(jsonPath("$.id").value(20))
-//				.andReturn().getResponse().getContentAsString();
-//		System.out.println("tokenJson: " + tokenJson);
 
 
-		String jsonString = tokenJsonList.get(0);
+		String jsonString = cardJsonList.get(0);
 		JsonNode rootNode = objectMapper.readTree(jsonString);
 
+		cardJsonList.forEach(s -> {;
+			try {
+				JsonNode rootNodeInner = objectMapper.readTree(s);
+				String lastUpdatedAt = rootNodeInner.get("lastUpdatedAt").asText();
+				OffsetDateTime offsetDateTime = OffsetDateTime.parse(lastUpdatedAt);
+				Date date = Date.from(offsetDateTime.toInstant());
+
+				String id = rootNodeInner.get("id").asText();
+				System.out.println("id: " + id + ", lastUpdatedAt: " + date.getTime() + ", lastUpdatedAt: " + lastUpdatedAt);
+			} catch (JsonProcessingException e) {
+				e.printStackTrace();
+			}
+		});
 		// Extract specific field value
 		String lastUpdatedAt = rootNode.get("lastUpdatedAt").asText();
 		String id = rootNode.get("id").asText();
@@ -259,7 +264,7 @@ class EmspApplicationTests {
 
 		final long[] lastId4Page = {-1};
 		final long[] lastUpdatedAtMilliseconds = {-1};
-		mockMvc.perform(get("/accounts/1/tokens/last_updated_at/" + milliseconds + "/last_id/0/page_size/" + PAGE_SIZE))
+		mockMvc.perform(get("/accounts/" + accountId + "/cards/last_updated_at/" + milliseconds + "/last_id/0/page_size/" + PAGE_SIZE))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$").isArray())
@@ -288,8 +293,8 @@ class EmspApplicationTests {
 						lastId4Page[0] = lastId;
 					}
 				});
-
-		mockMvc.perform(get("/accounts/1/tokens/last_updated_at/" + lastUpdatedAtMilliseconds[0] + "/last_id/"+lastId4Page[0]+"/page_size/" + PAGE_SIZE))
+		System.out.println("lastUpdatedAtMilliseconds: " + lastUpdatedAtMilliseconds[0] + ", lastId4Page: " + lastId4Page[0]);
+		mockMvc.perform(get("/accounts/"+accountId+"/cards/last_updated_at/" + lastUpdatedAtMilliseconds[0] + "/last_id/"+lastId4Page[0]+"/page_size/" + PAGE_SIZE))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$").isArray())
@@ -314,15 +319,5 @@ class EmspApplicationTests {
 						System.out.println("PaginationQuery: lastId: " + lastId + ", lastUpdatedAt: " + lastUpdatedAt);
 					}
 				});
-	}
-
-	private String generateToken(long accountId) throws Exception {
-		String lastUpdatedAt = mockMvc.perform(MockMvcRequestBuilders.post("/accounts/"+accountId+"/generate_token"))
-				.andDo(print())
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.id").isNumber())
-				.andReturn().getResponse().getContentAsString();
-
-		return lastUpdatedAt;
 	}
 }

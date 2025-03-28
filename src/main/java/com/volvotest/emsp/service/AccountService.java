@@ -1,10 +1,10 @@
 package com.volvotest.emsp.service;
 
 import com.volvotest.emsp.mapper.AccountMapper;
-import com.volvotest.emsp.mapper.TokenMapper;
+import com.volvotest.emsp.mapper.CardMapper;
 import com.volvotest.emsp.model.Account;
+import com.volvotest.emsp.model.Card;
 import com.volvotest.emsp.model.Token;
-import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,8 @@ public class AccountService {
     @Autowired
     private AccountMapper accountMapper;
     @Autowired
-    private TokenMapper tokenMapper;
+    private CardMapper cardMapper;
+
 
     public void addAccount(Account account) {
         accountMapper.insertAccount(account);
@@ -43,19 +44,6 @@ public class AccountService {
         accountMapper.deleteAccount(id);
     }
 
-    public Token generateToken(Long accountId) {
-        Account account = this.getAccountById(accountId);
-        if (account == null) {
-            throw new RuntimeException("Can't found account with id: " + accountId);
-        }
-        // generate token
-        Date now = new Date();
-        Date expireAt = new Date(now.getTime() + 1000 * 60 * 60);
-        String token = generateRandomString(32);
-        Token tokenEntity = new Token(-1L, accountId, token, expireAt, now, now);
-        tokenMapper.insertToken(tokenEntity);
-        return tokenEntity;
-    }
     private String generateRandomString(int length) {
         String candidateChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         StringBuilder sb = new StringBuilder();
@@ -65,16 +53,7 @@ public class AccountService {
         return sb.toString();
     }
 
-    public Token getTokenByAccountIdAndTokenId(Long accountId, Long tokenId) {
-        return tokenMapper.getTokenById(tokenId);
-    }
-
-    public List<Token> getTokensByAccountIdAndLastUpdatedAt(Long accountId, Long lastUpdatedAt, int page, int pageSize) {
-
-        return tokenMapper.getTokenByAccountId(accountId);
-    }
-
-    public List<Token> getTokensByAccountIdAndLastUpdatedAt(Long accountId, Long lastUpdateAt, Long lastId, int pageSize) {
-        return tokenMapper.getTokensByAccountIdAndLastUpdatedAt(accountId, new Date(lastUpdateAt), lastId, pageSize);
+    public List<Card> getCardsByAccountIdAndLastUpdatedAt(Long accountId, Long lastUpdateAt, Long lastId, int pageSize) {
+        return cardMapper.getCardsByAccountIdAndLastUpdatedAt(accountId, new Date(lastUpdateAt), lastId, pageSize);
     }
 }

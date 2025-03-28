@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.*;
 import java.util.Date;
 import java.util.List;
 
-@Mapper
+//@Mapper
 public interface TokenMapper {
     @Insert("INSERT INTO tokens (account_id, token, expired_at, created_at, last_updated_at) VALUES (#{accountId}, #{token}, #{expiredAt}, #{createdAt}, #{lastUpdatedAt})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
