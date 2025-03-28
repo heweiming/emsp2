@@ -10,7 +10,8 @@ import java.util.List;
 
 @Mapper
 public interface CardMapper {
-    @Insert("INSERT INTO cards (card_number, contract_id, status, balance) VALUES (#{cardNumber}, #{contractId}, #{status}, #{balance})")
+    @Insert("INSERT INTO cards (card_number, contract_id, status, balance, expired_at, created_at, last_updated_at) " +
+            "VALUES (#{cardNumber}, #{contractId}, #{status}, #{balance}, #{expiredAt}, #{createdAt}, #{lastUpdatedAt})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insertCard(Card card);
 
