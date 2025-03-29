@@ -38,9 +38,9 @@ public class AccountController {
         return account.getUid();
     }
 
-    @Operation(summary = "Update a account")
+    @Operation(summary = "Update a account status")
     @PutMapping("/accounts")
-    public boolean updateAccount(@RequestBody Account account) {
+    public boolean updateAccountStatus(@RequestBody Account account) {
         log.info("in updateAccount: received account: {}", account);
         accountService.updateAccount(account);
         return true;
