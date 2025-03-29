@@ -55,14 +55,19 @@ public class AccountController {
 
     @Operation(summary = "Link a Card To Account")
     @PostMapping("/accounts/{accountId}/link")
-    public boolean linkCardToAccount(@PathVariable String accountId, @RequestBody String cardId) {
+    public Account linkCardToAccount(@PathVariable String accountId, @RequestBody String cardId) {
         log.info("link card: {} to account: {}", cardId, accountId);
         Account account = accountService.getAccountById(Long.parseLong(accountId));
         if (account == null) {
             throw new RuntimeException("Can't found account with id: " + accountId);
         }
         String contractId = account.getContractId();
-        return this.cardService.updateCardContractId(Integer.parseInt(cardId), contractId);
+        if (this.cardService.updateCardContractId(Integer.parseInt(cardId), contractId)) {
+            account.linkCardToAccount(Long.parseLong(cardId));
+            return account;
+        } {
+            throw new RuntimeException("cardService.updateCardContractId("+cardId+", "+contractId+"): " + cardId);
+        }
     }
 
     @Operation(summary = "Pagination query card")

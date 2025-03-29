@@ -204,7 +204,7 @@ class EmspApplicationTests {
 						.content(cardId))
 				.andDo(print())
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$").isBoolean());
+				.andExpect(jsonPath("$.cardList[0].id").value(cardId));
 
 		mockMvc.perform(get("/cards/" + cardId)).andDo(print()).andExpect(jsonPath("$.contractId").value(this.contractId));
 	}
@@ -223,7 +223,7 @@ class EmspApplicationTests {
 							.content(cardId))
 					.andDo(print())
 					.andExpect(status().isOk())
-					.andExpect(jsonPath("$").isBoolean());
+					.andExpect(jsonPath("$.cardList").isNotEmpty());
 			cardJsonList.add(json);
 			Thread.sleep(100L);
 		}

@@ -1,6 +1,11 @@
 package com.volvotest.emsp.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.volvotest.emsp.common.AccountStatus;
+import com.volvotest.emsp.valueobject.CardVO;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Account {
     private Long uid;
@@ -8,6 +13,9 @@ public class Account {
     private String name;
     private String contractId;
     private AccountStatus status;
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private List<CardVO> cardList= new ArrayList<>();
 
     public Account(long uid, String email, String name, String contractId, AccountStatus status) {
         this.uid = uid;
@@ -54,6 +62,21 @@ public class Account {
 
     public void setStatus(AccountStatus status) {
         this.status = status;
+    }
+
+    public boolean linkCardToAccount(long cardId) {
+        for (CardVO card : cardList) {
+            if (card.getId() == cardId) {
+                return false; // Card already linked
+            }
+        }
+        CardVO newCard = new CardVO(cardId, contractId);
+        cardList.add(newCard);
+        return true;
+    }
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    public List<CardVO> getCardList() {
+        return cardList;
     }
 
     @Override
