@@ -21,7 +21,7 @@ public class CardService {
         return cardMapper.getCardById(id);
     }
 
-    public List<Card> getCardsByConstractId(Long constractId) {
+    public List<Card> getCardsByConstractId(String constractId) {
         return cardMapper.getCardsByContractId(constractId);
     }
 

@@ -39,7 +39,7 @@ public interface CardMapper {
             @Arg(column = "created_at", javaType = Date.class),
             @Arg(column = "last_updated_at", javaType = Date.class)
     })
-    List<Card> getCardsByContractId(Long contractId);
+    List<Card> getCardsByContractId(String contractId);
 
     @Update("UPDATE cards SET contract_id = #{contractId} WHERE id = #{id}")
     int updateCardContractId(int id, String contractId);

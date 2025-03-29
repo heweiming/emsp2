@@ -2,7 +2,6 @@ package com.volvotest.emsp.controller;
 
 import com.volvotest.emsp.model.Account;
 import com.volvotest.emsp.model.Card;
-import com.volvotest.emsp.model.Token;
 import com.volvotest.emsp.service.AccountService;
 import com.volvotest.emsp.service.CardService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -63,7 +62,10 @@ public class AccountController {
         }
         String contractId = account.getContractId();
         if (this.cardService.updateCardContractId(Integer.parseInt(cardId), contractId)) {
-            account.linkCardToAccount(Long.parseLong(cardId));
+            List<Card> cardList = cardService.getCardsByConstractId(contractId);
+            cardList.forEach(card -> {
+                account.linkCardToAccount(card.getId());
+            });
             return account;
         } {
             throw new RuntimeException("cardService.updateCardContractId("+cardId+", "+contractId+"): " + cardId);
