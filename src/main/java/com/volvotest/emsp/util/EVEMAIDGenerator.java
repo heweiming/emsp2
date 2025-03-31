@@ -72,7 +72,8 @@ public class EVEMAIDGenerator {
             System.out.println("\n--- EV EMAID Generator ---");
             System.out.println("1. Add Electric Vehicle");
             System.out.println("2. Display All Electric Vehicles with EMAIDs");
-            System.out.println("3. Exit");
+            System.out.println("3. Generate Volvo EMAID");
+            System.out.println("4. Exit");
             System.out.print("Choose an option: ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume newline
@@ -85,6 +86,9 @@ public class EVEMAIDGenerator {
                     displayAllVehicles();
                     break;
                 case 3:
+                    System.out.println(generateVolvoEMAID());
+                    break;
+                case 4:
                     System.out.println("Exiting the system. Goodbye!");
                     System.exit(0);
                 default:
@@ -115,5 +119,18 @@ public class EVEMAIDGenerator {
                 System.out.println(ev);
             }
         }
+    }
+
+    public static String generateVolvoEMAID() {
+
+        // 生成5位数字随机数
+
+        String randomString = String.valueOf((int) (Math.random() * 100000));
+        // Example vehicle ID
+
+        String manufacturer = "Volvo"; // Example manufacturer
+        String model = "XC90"; // Example model
+        ElectricVehicle ev = new ElectricVehicle(randomString, manufacturer, model);
+        return ev.getEMAID().replaceAll("-", "");
     }
 }

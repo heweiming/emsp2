@@ -34,6 +34,13 @@ public class AccountController {
     @PostMapping("/accounts")
     public Long createAccount(@RequestBody Account account) {
         log.info("received account: {}", account);
+        //contractId must be EMAID format
+        String contractId = account.getContractId();
+        if (contractId.matches("^[A-Z]{5}[A-Z0-9]{4}[0-9]{6}$")) {
+            account.setContractId(contractId);
+        } else {
+            throw new RuntimeException("Invalid contractId: " + contractId);
+        }
         accountService.addAccount(account);
         log.info("After insert database, account: {}", account);
         return account.getUid();

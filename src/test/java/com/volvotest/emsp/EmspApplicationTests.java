@@ -7,6 +7,7 @@ import com.volvotest.emsp.model.Account;
 import com.volvotest.emsp.common.AccountStatus;
 import com.volvotest.emsp.model.Card;
 import com.volvotest.emsp.common.CardStatus;
+import com.volvotest.emsp.util.EVEMAIDGenerator;
 import com.volvotest.emsp.valueobject.AccountStatusVO;
 import org.junit.jupiter.api.Test;
 import org.slf4j.ILoggerFactory;
@@ -43,7 +44,7 @@ class EmspApplicationTests {
 	@Autowired
 	private ObjectMapper objectMapper; // Converts objects to JSON and vice versa
 
-	private final String contractId = "SEVOLXC40123455";
+	private final String contractId = EVEMAIDGenerator.generateVolvoEMAID();
 
 	@Test
 	void contextLoads() {
