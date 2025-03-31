@@ -1,6 +1,7 @@
 package com.volvotest.emsp.mapper;
 
 import com.volvotest.emsp.model.Account;
+import com.volvotest.emsp.valueobject.AccountStatusVO;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -17,8 +18,8 @@ public interface AccountMapper {
     @Select("SELECT * FROM accounts")
     List<Account> getAllAccounts();
 
-    @Update("UPDATE accounts SET status = #{status} WHERE uid = #{uid}")
-    void updateAccount(Account account);
+    @Update("UPDATE accounts SET status = #{status} WHERE uid = #{id}")
+    void updateAccount(AccountStatusVO accountStatusVO);
 
     @Delete("DELETE FROM accounts WHERE uid = #{uid}")
     void deleteAccount(Long id);

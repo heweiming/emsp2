@@ -4,6 +4,7 @@ import com.volvotest.emsp.model.Account;
 import com.volvotest.emsp.model.Card;
 import com.volvotest.emsp.service.AccountService;
 import com.volvotest.emsp.service.CardService;
+import com.volvotest.emsp.valueobject.AccountStatusVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
@@ -40,9 +41,10 @@ public class AccountController {
 
     @Operation(summary = "Update a account status")
     @PutMapping("/accounts")
-    public boolean updateAccountStatus(@RequestBody Account account) {
-        log.info("in updateAccount: received account: {}", account);
-        accountService.updateAccount(account);
+    public boolean updateAccountStatus(@RequestBody AccountStatusVO accountVO) {
+        log.info("in updateAccount: received AccountStatusVO: {}", accountVO);
+
+        accountService.updateAccount(accountVO);
         return true;
     }
 

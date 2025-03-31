@@ -7,6 +7,7 @@ import com.volvotest.emsp.model.Account;
 import com.volvotest.emsp.common.AccountStatus;
 import com.volvotest.emsp.model.Card;
 import com.volvotest.emsp.common.CardStatus;
+import com.volvotest.emsp.valueobject.AccountStatusVO;
 import org.junit.jupiter.api.Test;
 import org.slf4j.ILoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,11 +107,11 @@ class EmspApplicationTests {
 				.andExpect(status().isOk())
 						.andExpect(jsonPath("$.status").value("DEACTIVED"));
 
-		account = new Account(1, "tohe@qq.com", "heweiming", contractId, AccountStatus.ACTIVED);
 
+		AccountStatusVO accountStatusVO = new AccountStatusVO(1, AccountStatus.ACTIVED);
 		mockMvc.perform(MockMvcRequestBuilders.put("/accounts")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(objectMapper.writeValueAsString(account)))
+						.content(objectMapper.writeValueAsString(accountStatusVO)))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$").isBoolean());

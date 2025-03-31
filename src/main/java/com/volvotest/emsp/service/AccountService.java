@@ -5,6 +5,7 @@ import com.volvotest.emsp.mapper.CardMapper;
 import com.volvotest.emsp.model.Account;
 import com.volvotest.emsp.model.Card;
 import com.volvotest.emsp.model.Token;
+import com.volvotest.emsp.valueobject.AccountStatusVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +37,8 @@ public class AccountService {
         return accountMapper.getAllAccounts();
     }
 
-    public void updateAccount(Account account) {
-        accountMapper.updateAccount(account);
+    public void updateAccount(AccountStatusVO accountStatusVO) {
+        accountMapper.updateAccount(accountStatusVO);
     }
 
     public void deleteAccount(Long id) {
