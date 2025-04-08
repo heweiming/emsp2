@@ -123,9 +123,15 @@ public class EVEMAIDGenerator {
 
     public static String generateVolvoEMAID() {
 
-        // 生成5位数字随机数
+        // 生5位数字随机数
+        // Generate fix 5 digit random number
+        StringBuilder sb = new StringBuilder();
+        for (int i=0; i<5; i++) {
+            int randomDigit = (int) (Math.random() * 10);
+            sb.append(randomDigit);
+        }
+        String randomString = sb.toString();
 
-        String randomString = String.valueOf((int) (Math.random() * 100000));
         // Example vehicle ID
 
         String manufacturer = "Volvo"; // Example manufacturer
